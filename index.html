@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mohamed Ramadan - PlayStation Portal</title>
-    <!-- أيقونة الموقع (Favicon) -->
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -18,16 +17,16 @@
         <h1 class="title">MOHAMED RAMADAN</h1>
         <p class="subtitle">PlayStation 4 Hub & Tools</p>
 
-        <!-- حالة الاتصال والجهاز -->
+        <!-- كارت حالة الجهاز -->
         <div class="status-card">
             <div class="status-indicator" id="indicator"></div>
-            <span id="status-text">جاري فحص الجهاز والمتصفح...</span>
+            <span id="status-text">جاري فحص الجهاز...</span>
         </div>
 
-        <!-- الأزرار التفاعلية -->
+        <!-- أزرار الواجهة -->
         <div class="button-grid">
-            <button class="btn" onclick="checkDevice()">فحص النظام (System Info)</button>
-            <button class="btn btn-secondary" onclick="alert('جاري تجهيز باقي الأدوات!')">الأدوات (Tools)</button>
+            <button class="btn" onclick="checkDevice(true)">فحص سريع للنظام (Quick Scan)</button>
+            <button class="btn btn-secondary" onclick="openToolsModal()">لوحة الأدوات (Tools Dashboard)</button>
         </div>
 
         <footer>
@@ -35,23 +34,94 @@
         </footer>
     </div>
 
+    <!-- نافذة الأدوات المنبثقة (Tools Modal) -->
+    <div class="modal-overlay" id="toolsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>لوحة الأدوات والنظام</h2>
+                <button class="close-btn" onclick="closeToolsModal()">✕</button>
+            </div>
+            
+            <div class="tools-grid">
+                <!-- اختيار الإصدار -->
+                <div class="tool-item">
+                    <label>إصدار النظام (Firmware Target):</label>
+                    <select id="fwSelect" onchange="saveFWPreference()">
+                        <option value="auto">تحديد تلقائي (Auto Detect)</option>
+                        <option value="9.00">Firmware 9.00</option>
+                        <option value="11.00">Firmware 11.00</option>
+                        <option value="other">إصدار آخر</option>
+                    </select>
+                </div>
+
+                <!-- تفاصيل العرض والعتاد -->
+                <div class="tool-item info-box">
+                    <p><strong>دقة الشاشة:</strong> <span id="screenRes">--</span></p>
+                    <p><strong>أنوية المعالج:</strong> <span id="cpuCores">--</span></p>
+                    <p><strong>وضع الشبكة:</strong> <span id="netStatus">--</span></p>
+                </div>
+
+                <!-- زر مسح الكاش للتحديث -->
+                <div class="tool-item">
+                    <button class="btn-action" onclick="clearAppCache()">تحديث ملفات الهوست (Clear Cache)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // فحص المتصفح ونوع الجهاز
-        function checkDevice() {
+        // فحص المتصفح والجهاز
+        function checkDevice(showAlert = false) {
             const ua = navigator.userAgent;
             const statusText = document.getElementById('status-text');
             const indicator = document.getElementById('indicator');
 
-            if (ua.includes("PlayStation 4")) {
+            let isPS4 = ua.includes("PlayStation 4");
+
+            if (isPS4) {
                 statusText.innerText = "متصل بنجاح من جهاز: PlayStation 4";
                 indicator.style.background = "#00ff66";
             } else {
                 statusText.innerText = "الجهاز الحالي ليس PlayStation 4";
                 indicator.style.background = "#ffaa00";
             }
+
+            if (showAlert) {
+                alert(isPS4 ? "الجهاز متوافق مع نظام PlayStation 4!" : "تنبيه: أنت تتصفح من منصة أخرى، بعض الخصائص قد تختلف.");
+            }
         }
 
-        // تأثير صوت نقرة البلايستيشن
+        // فتح وإغلاق لوحة الأدوات
+        function openToolsModal() {
+            document.getElementById('toolsModal').classList.add('active');
+            // قراءة مواصفات العرض
+            document.getElementById('screenRes').innerText = `${window.screen.width} x ${window.screen.height}`;
+            document.getElementById('cpuCores').innerText = navigator.hardwareConcurrency || "غير متاح";
+            document.getElementById('netStatus').innerText = navigator.onLine ? "متصل بالإنترنت (Online)" : "أوفلاين من الكاش (Offline)";
+        }
+
+        function closeToolsModal() {
+            document.getElementById('toolsModal').classList.remove('active');
+        }
+
+        // حفظ تفضيل الإصدار
+        function saveFWPreference() {
+            const val = document.getElementById('fwSelect').value;
+            localStorage.setItem('target_fw', val);
+        }
+
+        // مسح الكاش
+        function clearAppCache() {
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    for (let name of names) caches.delete(name);
+                    alert("تم مسح الكاش بنجاح، سيتم إعادة التحميل.");
+                    window.location.reload();
+                });
+            }
+        }
+
+        // صوت نقرة البلايستيشن
         function playClickSound() {
             try {
                 const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -64,7 +134,7 @@
                 osc.frequency.setValueAtTime(450, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.08);
 
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
 
                 osc.connect(gain);
@@ -72,26 +142,27 @@
 
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.08);
-            } catch (e) {
-                console.log("Audio context initialized");
-            }
+            } catch (e) {}
         }
 
-        // ربط الصوت بجميع الأزرار
         document.querySelectorAll('button').forEach(btn => {
             btn.addEventListener('click', playClickSound);
         });
 
-       // تشغيل التخزين الأوفلاين عبر Service Worker
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log('Service Worker Active:', reg.scope))
-            .catch(err => console.warn('Service Worker failed:', err));
-    });
-}
+        // تشغيل الـ Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('SW Registered:', reg.scope))
+                    .catch(err => console.warn('SW Error:', err));
+            });
+        }
 
-        window.onload = checkDevice;
+        window.onload = () => {
+            checkDevice();
+            const saved = localStorage.getItem('target_fw');
+            if (saved) document.getElementById('fwSelect').value = saved;
+        };
     </script>
 </body>
 </html>
