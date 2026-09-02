@@ -4,29 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mohamed Ramadan - PlayStation Portal</title>
+    <!-- أيقونة الموقع (Favicon) -->
+    <link rel="icon" type="image/png" href="logo.png">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <!-- شعار الموقع -->
+        <!-- لوجو الموقع -->
         <div class="logo-box">
             <img src="logo.png" alt="Mohamed Ramadan Logo" class="logo-img">
         </div>
 
-        <!-- معلومات الموقع -->
         <h1 class="title">MOHAMED RAMADAN</h1>
         <p class="subtitle">PlayStation 4 Hub & Tools</p>
 
-        <!-- صندوق فحص المتصفح والحالة -->
+        <!-- حالة الاتصال والجهاز -->
         <div class="status-card">
             <div class="status-indicator" id="indicator"></div>
             <span id="status-text">جاري فحص الجهاز والمتصفح...</span>
         </div>
 
-        <!-- أزرار الخدمات أو الروابط -->
+        <!-- الأزرار التفاعلية -->
         <div class="button-grid">
             <button class="btn" onclick="checkDevice()">فحص النظام (System Info)</button>
-            <button class="btn btn-secondary" onclick="alert('قريباً!')">الأدوات (Tools)</button>
+            <button class="btn btn-secondary" onclick="alert('جاري تجهيز باقي الأدوات!')">الأدوات (Tools)</button>
         </div>
 
         <footer>
@@ -35,6 +36,7 @@
     </div>
 
     <script>
+        // فحص المتصفح ونوع الجهاز
         function checkDevice() {
             const ua = navigator.userAgent;
             const statusText = document.getElementById('status-text');
@@ -44,12 +46,49 @@
                 statusText.innerText = "متصل بنجاح من جهاز: PlayStation 4";
                 indicator.style.background = "#00ff66";
             } else {
-                statusText.innerText = "الجهاز الحالي ليس PlayStation 4 (المتصفح: " + navigator.userAgentData?.platform || "PC/Mobile" + ")";
+                statusText.innerText = "الجهاز الحالي ليس PlayStation 4";
                 indicator.style.background = "#ffaa00";
             }
         }
 
-        // تشغيل الفحص تلقائياً عند فتح الصفحة
+        // تأثير صوت نقرة البلايستيشن
+        function playClickSound() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                if (!AudioCtx) return;
+                const audioCtx = new AudioCtx();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(450, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.08);
+
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.08);
+            } catch (e) {
+                console.log("Audio context initialized");
+            }
+        }
+
+        // ربط الصوت بجميع الأزرار
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', playClickSound);
+        });
+
+        // تشغيل التخزين الأوفلاين عبر Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => {
+                console.log('Service Worker skipped:', err);
+            });
+        }
+
         window.onload = checkDevice;
     </script>
 </body>
