@@ -91,12 +91,10 @@
             overflow: auto;
             white-space: pre-wrap;
             word-break: break-word;
-
             padding: 15px;
             background: #080c15;
             border: 1px solid #1c2b43;
             border-radius: 10px;
-
             color: #c8d2e3;
             font: 13px/1.6 Consolas, "Courier New", monospace;
         }
@@ -144,26 +142,21 @@
 <body>
 
 <div class="page">
-
     <main class="panel">
 
         <header class="header">
-
-            <!-- استخدم logo.png الموجود عندك -->
             <img
                 src="./logo.png"
                 alt="Mohamed Ramadan"
                 class="logo"
+                onerror="this.style.display='none';"
             >
 
-            <h1 class="brand">
-                MOHAMED RAMADAN
-            </h1>
+            <h1 class="brand">MOHAMED RAMADAN</h1>
 
             <p class="subtitle">
-                PlayStation 4 Hub & Tools
+                PlayStation 4 Hub &amp; Tools
             </p>
-
         </header>
 
         <section class="content">
@@ -185,7 +178,6 @@
         </footer>
 
     </main>
-
 </div>
 
 <script>
@@ -201,11 +193,6 @@
         out.textContent += text + "\n";
         out.scrollTop = out.scrollHeight;
     }
-
-    /*
-     * واجهة عرض فقط.
-     * ضع منطق التطبيق الخاص بك هنا بشكل منفصل.
-     */
 
     setState("صفحة الأدوات جاهزة", "ok");
 
