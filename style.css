@@ -2,7 +2,13 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
 }
 
 body {
@@ -31,8 +37,12 @@ body {
 }
 
 .logo-img {
+    display: block;
     max-width: 220px;
+    width: 100%;
     height: auto;
+    margin: 0 auto;
+    object-fit: contain;
     filter: drop-shadow(0 0 15px rgba(0, 150, 255, 0.5));
 }
 
@@ -66,6 +76,7 @@ body {
 .status-indicator {
     width: 12px;
     height: 12px;
+    flex: 0 0 12px;
     border-radius: 50%;
     background: #00d2ff;
     box-shadow: 0 0 8px currentColor;
@@ -78,6 +89,7 @@ body {
 }
 
 .btn {
+    width: 100%;
     background: linear-gradient(90deg, #0052d4, #4364f7, #6fb1fc);
     color: white;
     border: none;
@@ -110,18 +122,20 @@ footer {
     font-size: 12px;
     color: #5d6d7e;
 }
-/* تنسيقات نافذة الأدوات المنبثقة */
+
+/* نافذة الأدوات */
 .modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
+    inset: 0;
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     display: none;
     justify-content: center;
     align-items: center;
+    padding: 20px;
     z-index: 1000;
 }
 
@@ -133,8 +147,10 @@ footer {
     background: #09132b;
     border: 1px solid rgba(0, 210, 255, 0.3);
     border-radius: 16px;
-    width: 90%;
+    width: 100%;
     max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
     padding: 25px;
     box-shadow: 0 0 25px rgba(0, 150, 255, 0.3);
     text-align: right;
@@ -160,6 +176,11 @@ footer {
     color: #8fa3bf;
     font-size: 20px;
     cursor: pointer;
+    padding: 2px 6px;
+}
+
+.close-btn:hover {
+    color: #ffffff;
 }
 
 .tools-grid {
@@ -183,6 +204,7 @@ footer {
     border-radius: 8px;
     color: white;
     outline: none;
+    cursor: pointer;
 }
 
 .info-box {
@@ -191,6 +213,10 @@ footer {
     border-radius: 8px;
     font-size: 13px;
     line-height: 1.8;
+}
+
+.info-box p {
+    margin: 0;
 }
 
 .info-box span {
@@ -213,4 +239,33 @@ footer {
 .btn-action:hover {
     background: #ff4444;
     color: white;
+}
+
+/* موبايل */
+@media (max-width: 600px) {
+    body {
+        padding: 12px;
+    }
+
+    .container {
+        padding: 30px 18px;
+        border-radius: 16px;
+    }
+
+    .logo-img {
+        max-width: 180px;
+    }
+
+    .title {
+        font-size: 22px;
+        letter-spacing: 2px;
+    }
+
+    .subtitle {
+        margin-bottom: 24px;
+    }
+
+    .modal-content {
+        padding: 20px;
+    }
 }
