@@ -1,5 +1,5 @@
 // chain_lapse.js
-// Loader / Diagnostic فقط
+// Loader / Diagnostic
 
 (() => {
     "use strict";
@@ -9,14 +9,12 @@
 
     function log(text) {
         if (!out) return;
-
         out.textContent += String(text) + "\n";
         out.scrollTop = out.scrollHeight;
     }
 
     function setState(text, type = "warn") {
         if (!state) return;
-
         state.textContent = text;
         state.className = type;
     }
@@ -26,59 +24,62 @@
             log("[CHECK] " + file);
 
             const response = await fetch("./" + file, {
-                method: "GET",
                 cache: "no-store"
             });
 
             if (!response.ok) {
-                log(
-                    "[FAIL] " +
-                    file +
-                    " -> HTTP " +
-                    response.status
-                );
-
+                log("[FAIL] " + file + " -> HTTP " + response.status);
                 return false;
             }
 
             const contentType =
                 response.headers.get("content-type") || "";
 
-            if (
-                file.endsWith(".html") &&
-                contentType.includes("text/html")
-            ) {
-                log("[OK] " + file);
-                return true;
-            }
-
-            if (
-                file.endsWith(".js") &&
-                contentType.includes("text/html")
-            ) {
-                log(
-                    "[FAIL] " +
-                    file +
-                    " -> HTML returned instead of JavaScript"
-                );
-
-                return false;
-            }
-
             log("[OK] " + file);
+            log("[TYPE] " + contentType);
 
             return true;
 
         } catch (error) {
-
-            log(
-                "[FAIL] " +
-                file +
-                " -> " +
-                (error.message || error)
-            );
-
+            log("[FAIL] " + file + " -> " + (error.message || error));
             return false;
+        }
+    }
+
+    async function loadPayload() {
+        try {
+            log("");
+            log("[LOAD] payload.bin");
+
+            const response = await fetch("./payload.bin", {
+                cache: "no-store"
+            });
+
+            if (!response.ok) {
+                throw new Error("HTTP " + response.status);
+            }
+
+            const buffer = await response.arrayBuffer();
+
+            log("[OK] payload.bin loaded");
+            log("[SIZE] " + buffer.byteLength + " bytes");
+
+            // عرض أول 16 بايت للتأكد أن الملف تم قراءته
+            const bytes = new Uint8Array(buffer);
+            const preview = Array.from(bytes.slice(0, 16))
+                .map(b => b.toString(16).padStart(2, "0"))
+                .join(" ");
+
+            log("[HEX] " + preview);
+
+            setState("تم تحميل payload.bin بنجاح", "ok");
+
+            return buffer;
+
+        } catch (error) {
+            log("[FAIL] payload.bin -> " + (error.message || error));
+            setState("فشل تحميل payload.bin", "bad");
+            return null;
         }
     }
 
@@ -86,12 +87,10 @@
 
         setState("جاري فحص الملفات...", "warn");
 
-        log("");
         log("================================");
         log("MOHAMED RAMADAN - PS4 HUB");
         log("CHAIN LOADER");
         log("================================");
-        log("");
         log("URL: " + location.href);
         log("");
 
@@ -106,7 +105,6 @@
         let failed = false;
 
         for (const file of files) {
-
             const result = await checkFile(file);
 
             if (!result) {
@@ -119,54 +117,31 @@
 
         if (failed) {
 
-            setState(
-                "تم إيقاف الفحص بسبب خطأ في الملفات",
-                "bad"
-            );
-
-            log(
-                "لم يتم العثور على جميع الملفات المطلوبة بشكل صحيح."
-            );
+            setState("يوجد ملف به مشكلة", "bad");
+            log("الفحص لم يكتمل.");
 
         } else {
 
-            setState(
-                "تم فحص الملفات بنجاح",
-                "ok"
-            );
+            log("جميع الملفات المطلوبة متاحة.");
+            log("");
+            log("بدء تحميل payload.bin...");
 
-            log(
-                "جميع الملفات المطلوبة متاحة."
-            );
+            await loadPayload();
         }
 
         log("================================");
     }
 
-    window.addEventListener("error", function (event) {
-
-        log(
-            "[JS ERROR] " +
-            (event.message || "Unknown error")
-        );
-
+    window.addEventListener("error", event => {
+        log("[JS ERROR] " + (event.message || "Unknown error"));
     });
 
-    window.addEventListener(
-        "unhandledrejection",
-        function (event) {
-
-            log(
-                "[PROMISE ERROR] " +
-                (
-                    event.reason?.message ||
-                    event.reason ||
-                    "Unknown rejection"
-                )
-            );
-
-        }
-    );
+    window.addEventListener("unhandledrejection", event => {
+        log(
+            "[PROMISE ERROR] " +
+            (event.reason?.message || event.reason || "Unknown rejection")
+        );
+    });
 
     start();
 
