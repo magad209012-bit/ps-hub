@@ -1,295 +1,173 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+// chain_lapse.js
+// Loader / Diagnostic فقط
 
-    <title>Mohamed Ramadan - PS4 Hub</title>
+(() => {
+    "use strict";
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html,
-        body {
-            width: 100%;
-            min-height: 100%;
-        }
-
-        body {
-            background: radial-gradient(
-                circle at center,
-                #0a1128 0%,
-                #000411 100%
-            );
-            color: #fff;
-            font-family: "Segoe UI", Tahoma, Arial, sans-serif;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .page {
-            min-height: calc(100vh - 40px);
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 950px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(0, 150, 255, 0.25);
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: 0 0 30px rgba(0, 100, 255, 0.15);
-        }
-
-        .header {
-            text-align: center;
-            padding: 35px 20px 28px;
-            background: rgba(4, 10, 25, 0.75);
-            border-bottom: 1px solid rgba(0, 150, 255, 0.2);
-        }
-
-        .logo {
-            width: 90px;
-            height: 90px;
-            object-fit: contain;
-            display: block;
-            margin: 0 auto 15px;
-            filter: drop-shadow(
-                0 0 15px rgba(0, 210, 255, 0.45)
-            );
-        }
-
-        .title {
-            font-size: 26px;
-            font-weight: 700;
-            letter-spacing: 3px;
-            color: #00d2ff;
-            text-shadow: 0 0 10px rgba(0, 210, 255, 0.45);
-            margin-bottom: 6px;
-        }
-
-        .subtitle {
-            color: #8fa3bf;
-            font-size: 14px;
-        }
-
-        .content {
-            padding: 25px;
-        }
-
-        #state {
-            font-size: 22px;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 15px;
-            color: #e5c56e;
-        }
-
-        #state.ok {
-            color: #70e0a0;
-        }
-
-        #state.bad {
-            color: #ff817d;
-        }
-
-        #state.warn {
-            color: #e5c56e;
-        }
-
-        #out {
-            width: 100%;
-            min-height: 380px;
-            max-height: 65vh;
-            overflow: auto;
-            white-space: pre-wrap;
-            word-break: break-word;
-
-            direction: ltr;
-            text-align: left;
-
-            padding: 18px;
-
-            background: #050a14;
-
-            border: 1px solid rgba(0, 210, 255, 0.18);
-
-            border-radius: 12px;
-
-            color: #c8d2e3;
-
-            font:
-                13px/1.7
-                Consolas,
-                "Courier New",
-                monospace;
-        }
-
-        .back {
-            display: block;
-            width: 100%;
-            margin-top: 16px;
-            padding: 14px;
-
-            border: 1px solid rgba(0, 210, 255, 0.45);
-            border-radius: 10px;
-
-            background: #101c31;
-            color: #00d2ff;
-
-            text-decoration: none;
-            text-align: center;
-
-            font-size: 15px;
-            font-weight: 700;
-
-            transition: 0.25s ease;
-        }
-
-        .back:hover {
-            background: #142640;
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.15);
-        }
-
-        .footer {
-            text-align: center;
-            padding: 15px;
-            color: #5d6d7e;
-            font-size: 12px;
-            border-top: 1px solid rgba(0, 150, 255, 0.15);
-        }
-
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-
-            .page {
-                min-height: calc(100vh - 20px);
-            }
-
-            .header {
-                padding: 25px 15px;
-            }
-
-            .logo {
-                width: 75px;
-                height: 75px;
-            }
-
-            .title {
-                font-size: 21px;
-                letter-spacing: 2px;
-            }
-
-            .content {
-                padding: 15px;
-            }
-
-            #state {
-                font-size: 19px;
-            }
-
-            #out {
-                min-height: 320px;
-                font-size: 12px;
-                padding: 13px;
-            }
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="page">
-
-    <main class="container">
-
-        <header class="header">
-
-            <img
-                src="./logo.png"
-                alt="Mohamed Ramadan"
-                class="logo"
-            >
-
-            <h1 class="title">
-                MOHAMED RAMADAN
-            </h1>
-
-            <p class="subtitle">
-                PlayStation 4 Hub &amp; Tools
-            </p>
-
-        </header>
-
-        <section class="content">
-
-            <div id="state" class="warn">
-                جاري تشغيل الصفحة...
-            </div>
-
-            <div id="out"></div>
-
-            <a href="./index.html" class="back">
-                العودة إلى الصفحة الرئيسية
-            </a>
-
-        </section>
-
-        <footer class="footer">
-            © 2026 Mohamed Ramadan
-        </footer>
-
-    </main>
-
-</div>
-
-<script>
     const state = document.getElementById("state");
     const out = document.getElementById("out");
 
+    function log(text) {
+        if (!out) return;
+
+        out.textContent += String(text) + "\n";
+        out.scrollTop = out.scrollHeight;
+    }
+
     function setState(text, type = "warn") {
+        if (!state) return;
+
         state.textContent = text;
         state.className = type;
     }
 
-    function log(text) {
-        out.textContent += text + "\n";
-        out.scrollTop = out.scrollHeight;
+    async function checkFile(file) {
+        try {
+            log("[CHECK] " + file);
+
+            const response = await fetch("./" + file, {
+                method: "GET",
+                cache: "no-store"
+            });
+
+            if (!response.ok) {
+                log(
+                    "[FAIL] " +
+                    file +
+                    " -> HTTP " +
+                    response.status
+                );
+
+                return false;
+            }
+
+            const contentType =
+                response.headers.get("content-type") || "";
+
+            if (
+                file.endsWith(".html") &&
+                contentType.includes("text/html")
+            ) {
+                log("[OK] " + file);
+                return true;
+            }
+
+            if (
+                file.endsWith(".js") &&
+                contentType.includes("text/html")
+            ) {
+                log(
+                    "[FAIL] " +
+                    file +
+                    " -> HTML returned instead of JavaScript"
+                );
+
+                return false;
+            }
+
+            log("[OK] " + file);
+
+            return true;
+
+        } catch (error) {
+
+            log(
+                "[FAIL] " +
+                file +
+                " -> " +
+                (error.message || error)
+            );
+
+            return false;
+        }
+    }
+
+    async function start() {
+
+        setState("جاري فحص الملفات...", "warn");
+
+        log("");
+        log("================================");
+        log("MOHAMED RAMADAN - PS4 HUB");
+        log("CHAIN LOADER");
+        log("================================");
+        log("");
+        log("URL: " + location.href);
+        log("");
+
+        const files = [
+            "core.js",
+            "mem.js",
+            "int64.js",
+            "ps4_offsets.js",
+            "payload.bin"
+        ];
+
+        let failed = false;
+
+        for (const file of files) {
+
+            const result = await checkFile(file);
+
+            if (!result) {
+                failed = true;
+            }
+        }
+
+        log("");
+        log("================================");
+
+        if (failed) {
+
+            setState(
+                "تم إيقاف الفحص بسبب خطأ في الملفات",
+                "bad"
+            );
+
+            log(
+                "لم يتم العثور على جميع الملفات المطلوبة بشكل صحيح."
+            );
+
+        } else {
+
+            setState(
+                "تم فحص الملفات بنجاح",
+                "ok"
+            );
+
+            log(
+                "جميع الملفات المطلوبة متاحة."
+            );
+        }
+
+        log("================================");
     }
 
     window.addEventListener("error", function (event) {
+
         log(
-            "[PAGE ERROR] " +
+            "[JS ERROR] " +
             (event.message || "Unknown error")
         );
+
     });
 
-    window.addEventListener("unhandledrejection", function (event) {
-        log(
-            "[PROMISE ERROR] " +
-            (event.reason || "Unknown rejection")
-        );
-    });
+    window.addEventListener(
+        "unhandledrejection",
+        function (event) {
 
-    setState("جاري تشغيل الصفحة...", "warn");
+            log(
+                "[PROMISE ERROR] " +
+                (
+                    event.reason?.message ||
+                    event.reason ||
+                    "Unknown rejection"
+                )
+            );
 
-    log("MOHAMED RAMADAN - PS4 HUB");
-    log("--------------------------------");
-    log("تم تحميل واجهة الصفحة.");
-    log("URL: " + location.href);
-</script>
+        }
+    );
 
-<!-- يتم تحميله مرة واحدة فقط -->
-<script type="module" src="./chain_lapse.js"></script>
+    start();
 
-</body>
-</html>
+})();
