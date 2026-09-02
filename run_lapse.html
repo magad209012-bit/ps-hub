@@ -48,7 +48,7 @@
 
         .container {
             width: 100%;
-            max-width: 950px;
+            max-width: 1000px;
 
             background: rgba(255, 255, 255, 0.03);
 
@@ -111,6 +111,7 @@
 
         .subtitle {
             color: #8fa3bf;
+
             font-size: 14px;
         }
 
@@ -275,7 +276,9 @@
 
             #out {
                 min-height: 320px;
+
                 font-size: 12px;
+
                 padding: 13px;
             }
         }
@@ -287,6 +290,8 @@
 <div class="page">
 
     <main class="container">
+
+        <!-- HEADER -->
 
         <header class="header">
 
@@ -305,6 +310,9 @@
             </p>
 
         </header>
+
+
+        <!-- CONTENT -->
 
         <section class="content">
 
@@ -326,6 +334,9 @@
 
         </section>
 
+
+        <!-- FOOTER -->
+
         <footer class="footer">
             © 2026 Mohamed Ramadan
         </footer>
@@ -334,34 +345,82 @@
 
 </div>
 
+
 <script>
+(() => {
+
     "use strict";
 
-    const state = document.getElementById("state");
-    const out = document.getElementById("out");
+    const state =
+        document.getElementById("state");
+
+    const out =
+        document.getElementById("out");
+
+
+    function log(text) {
+
+        if (!out) return;
+
+        out.textContent +=
+            String(text) + "\n";
+
+        out.scrollTop =
+            out.scrollHeight;
+    }
+
 
     function setState(text, type) {
+
         if (!state) return;
 
         state.textContent = text;
-        state.className = type || "warn";
+
+        state.className =
+            type || "warn";
     }
 
-    function log(text) {
-        if (!out) return;
 
-        out.textContent += String(text) + "\n";
-        out.scrollTop = out.scrollHeight;
-    }
+    setState(
+        "جاري تشغيل الصفحة...",
+        "warn"
+    );
 
-    window.addEventListener("error", function (event) {
 
-        log(
-            "[PAGE ERROR] " +
-            (event.message || "Unknown error")
-        );
+    log(
+        "MOHAMED RAMADAN - PS4 HUB"
+    );
 
-    });
+    log(
+        "--------------------------------"
+    );
+
+    log(
+        "تم تحميل واجهة الصفحة."
+    );
+
+    log(
+        "URL: " + location.href
+    );
+
+    log("");
+
+
+    window.addEventListener(
+        "error",
+        function (event) {
+
+            log(
+                "[PAGE ERROR] " +
+                (
+                    event.message ||
+                    "Unknown error"
+                )
+            );
+
+        }
+    );
+
 
     window.addEventListener(
         "unhandledrejection",
@@ -379,15 +438,20 @@
         }
     );
 
-    setState("جاري تشغيل الصفحة...", "warn");
-
-    log("MOHAMED RAMADAN - PS4 HUB");
-    log("--------------------------------");
-    log("تم تحميل واجهة الصفحة.");
-    log("URL: " + location.href);
+})();
 </script>
 
-<script src="./chain_lapse.js"></script>
+
+<!--
+    مهم:
+    يتم تحميل chain_lapse.js مرة واحدة فقط
+-->
+
+<script
+    type="module"
+    src="./chain_lapse.js">
+</script>
+
 
 </body>
 </html>
