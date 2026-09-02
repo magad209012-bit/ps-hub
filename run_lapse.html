@@ -1,192 +1,112 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+// chain_lapse.js
+// Loader / diagnostic فقط
 
-    <title>Mohamed Ramadan - PS4 Hub</title>
+(() => {
+    "use strict";
 
-    <style>
-        * {
-            box-sizing: border-box;
+    const state = document.getElementById("state");
+    const out = document.getElementById("out");
+
+    function log(text) {
+        if (!out) return;
+
+        out.textContent += String(text) + "\n";
+        out.scrollTop = out.scrollHeight;
+    }
+
+    function setState(text, type = "warn") {
+        if (!state) return;
+
+        state.textContent = text;
+        state.className = type;
+    }
+
+    async function checkFile(file) {
+        try {
+            const response = await fetch("./" + file, {
+                method: "GET",
+                cache: "no-store"
+            });
+
+            if (!response.ok) {
+                log("[FAIL] " + file + " -> HTTP " + response.status);
+                return false;
+            }
+
+            const type = response.headers.get("content-type") || "";
+
+            // لو السيرفر رجّع HTML بدل الملف
+            if (
+                type.includes("text/html") &&
+                file.endsWith(".js")
+            ) {
+                log("[FAIL] " + file + " -> server returned HTML");
+                return false;
+            }
+
+            log("[OK] " + file);
+            return true;
+
+        } catch (error) {
+            log("[FAIL] " + file + " -> " + error.message);
+            return false;
+        }
+    }
+
+    async function start() {
+
+        setState("جاري فحص الملفات...", "warn");
+
+        log("");
+        log("================================");
+        log("MOHAMED RAMADAN - PS4 HUB");
+        log("CHAIN LOADER");
+        log("================================");
+        log("");
+
+        const files = [
+            "core.js",
+            "mem.js",
+            "int64.js",
+            "ps4_offsets.js",
+            "payload.bin"
+        ];
+
+        let failed = false;
+
+        for (const file of files) {
+            const ok = await checkFile(file);
+
+            if (!ok) {
+                failed = true;
+            }
         }
 
-        html, body {
-            margin: 0;
-            padding: 0;
-            min-height: 100%;
-            background: #080d1d;
-            color: #dce5f5;
-            font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+        log("");
+        log("--------------------------------");
+
+        if (failed) {
+            setState("يوجد خطأ في الملفات", "bad");
+            log("تم إيقاف الفحص بسبب وجود ملف غير متاح.");
+        } else {
+            setState("تم فحص الملفات بنجاح", "ok");
+            log("جميع الملفات المطلوبة متاحة.");
         }
 
-        body {
-            min-height: 100vh;
-        }
+        log("--------------------------------");
+    }
 
-        .page {
-            min-height: 100vh;
-            padding: 30px 15px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
+    window.addEventListener("error", event => {
+        log("[JS ERROR] " + (event.message || "Unknown error"));
+    });
 
-        .panel {
-            width: min(100%, 950px);
-            background: #0d1426;
-            border: 1px solid #19365f;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 0 35px rgba(0,150,255,.12);
-        }
+    window.addEventListener("unhandledrejection", event => {
+        log(
+            "[PROMISE ERROR] " +
+            (event.reason?.message || event.reason || "Unknown rejection")
+        );
+    });
 
-        .header {
-            text-align: center;
-            padding: 22px 15px;
-            background: #0a1120;
-            border-bottom: 1px solid #19365f;
-        }
+    start();
 
-        .logo {
-            width: 70px;
-            height: 70px;
-            object-fit: contain;
-            border-radius: 50%;
-            display: block;
-            margin: 0 auto 10px;
-        }
-
-        .brand {
-            margin: 0;
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: #00cfff;
-        }
-
-        .subtitle {
-            margin: 5px 0 0;
-            color: #8193b2;
-            font-size: 14px;
-        }
-
-        .content {
-            padding: 20px;
-        }
-
-        #state {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        #out {
-            width: 100%;
-            min-height: 350px;
-            max-height: 65vh;
-            overflow: auto;
-            white-space: pre-wrap;
-            word-break: break-word;
-
-            padding: 15px;
-
-            background: #080c15;
-            border: 1px solid #1c2b43;
-            border-radius: 10px;
-
-            color: #c8d2e3;
-            font: 13px/1.6 Consolas, "Courier New", monospace;
-        }
-
-        .ok {
-            color: #70e0a0;
-        }
-
-        .bad {
-            color: #ff817d;
-        }
-
-        .warn {
-            color: #e5c56e;
-        }
-
-        .back {
-            display: block;
-            width: 100%;
-            margin-top: 15px;
-            padding: 13px;
-
-            border: 1px solid #087ac1;
-            border-radius: 9px;
-
-            background: #101c31;
-            color: #00cfff;
-
-            text-decoration: none;
-            text-align: center;
-            font-weight: 700;
-        }
-
-        .back:hover {
-            background: #142640;
-        }
-
-        .footer {
-            text-align: center;
-            padding: 15px;
-            color: #63738d;
-            font-size: 12px;
-            border-top: 1px solid #19365f;
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="page">
-
-    <main class="panel">
-
-        <header class="header">
-
-            <img
-                src="./logo.png"
-                alt="Mohamed Ramadan"
-                class="logo"
-            >
-
-            <h1 class="brand">
-                MOHAMED RAMADAN
-            </h1>
-
-            <p class="subtitle">
-                PlayStation 4 Hub & Tools
-            </p>
-
-        </header>
-
-        <section class="content">
-
-            <div id="state" class="warn">
-                جاري تشغيل الصفحة...
-            </div>
-
-            <div id="out"></div>
-
-            <a href="./index.html" class="back">
-                العودة إلى الصفحة الرئيسية
-            </a>
-
-        </section>
-
-        <footer class="footer">
-            © 2026 Mohamed Ramadan
-        </footer>
-
-    </main>
-
-</div>
-<script type="module" src="./chain_lapse.js"></script>
-</body>
-</html>
+})();
