@@ -1,6 +1,3 @@
-// chain_lapse.js
-// Loader / diagnostic فقط
-
 (() => {
     "use strict";
 
@@ -14,15 +11,17 @@
         out.scrollTop = out.scrollHeight;
     }
 
-    function setState(text, type = "warn") {
+    function setState(text, type) {
         if (!state) return;
 
         state.textContent = text;
-        state.className = type;
+        state.className = type || "warn";
     }
 
     async function checkFile(file) {
         try {
+            log("[CHECK] " + file);
+
             const response = await fetch("./" + file, {
                 method: "GET",
                 cache: "no-store"
@@ -33,14 +32,14 @@
                 return false;
             }
 
-            const type = response.headers.get("content-type") || "";
+            const contentType =
+                response.headers.get("content-type") || "";
 
-            // لو السيرفر رجّع HTML بدل الملف
             if (
-                type.includes("text/html") &&
-                file.endsWith(".js")
+                file.endsWith(".js") &&
+                contentType.includes("text/html")
             ) {
-                log("[FAIL] " + file + " -> server returned HTML");
+                log("[FAIL] " + file + " -> HTML returned instead of JS");
                 return false;
             }
 
@@ -48,7 +47,13 @@
             return true;
 
         } catch (error) {
-            log("[FAIL] " + file + " -> " + error.message);
+            log(
+                "[FAIL] " +
+                file +
+                " -> " +
+                (error.message || error)
+            );
+
             return false;
         }
     }
@@ -58,10 +63,10 @@
         setState("جاري فحص الملفات...", "warn");
 
         log("");
-        log("================================");
         log("MOHAMED RAMADAN - PS4 HUB");
-        log("CHAIN LOADER");
-        log("================================");
+        log("--------------------------------");
+        log("chain_lapse.js loaded successfully");
+        log("URL: " + location.href);
         log("");
 
         const files = [
@@ -75,9 +80,10 @@
         let failed = false;
 
         for (const file of files) {
-            const ok = await checkFile(file);
 
-            if (!ok) {
+            const result = await checkFile(file);
+
+            if (!result) {
                 failed = true;
             }
         }
@@ -86,26 +92,51 @@
         log("--------------------------------");
 
         if (failed) {
-            setState("يوجد خطأ في الملفات", "bad");
-            log("تم إيقاف الفحص بسبب وجود ملف غير متاح.");
+
+            setState(
+                "يوجد ملف به مشكلة",
+                "bad"
+            );
+
+            log("تم العثور على ملف غير متاح أو غير صحيح.");
+
         } else {
-            setState("تم فحص الملفات بنجاح", "ok");
+
+            setState(
+                "تم فحص الملفات بنجاح",
+                "ok"
+            );
+
             log("جميع الملفات المطلوبة متاحة.");
         }
 
         log("--------------------------------");
     }
 
-    window.addEventListener("error", event => {
-        log("[JS ERROR] " + (event.message || "Unknown error"));
+    window.addEventListener("error", function (event) {
+
+        log(
+            "[ERROR] " +
+            (event.message || "Unknown error")
+        );
+
     });
 
-    window.addEventListener("unhandledrejection", event => {
-        log(
-            "[PROMISE ERROR] " +
-            (event.reason?.message || event.reason || "Unknown rejection")
-        );
-    });
+    window.addEventListener(
+        "unhandledrejection",
+        function (event) {
+
+            log(
+                "[PROMISE ERROR] " +
+                (
+                    event.reason?.message ||
+                    event.reason ||
+                    "Unknown rejection"
+                )
+            );
+
+        }
+    );
 
     start();
 
