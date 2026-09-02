@@ -25,22 +25,14 @@
                 #0a1128 0%,
                 #000411 100%
             );
-
             color: #fff;
-
-            font-family:
-                "Segoe UI",
-                Tahoma,
-                Arial,
-                sans-serif;
-
+            font-family: "Segoe UI", Tahoma, Arial, sans-serif;
             min-height: 100vh;
             padding: 20px;
         }
 
         .page {
             min-height: calc(100vh - 40px);
-
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -49,71 +41,44 @@
         .container {
             width: 100%;
             max-width: 950px;
-
             background: rgba(255, 255, 255, 0.03);
-
             border: 1px solid rgba(0, 150, 255, 0.25);
-
             border-radius: 18px;
-
             overflow: hidden;
-
-            box-shadow:
-                0 0 30px rgba(0, 100, 255, 0.15);
+            box-shadow: 0 0 30px rgba(0, 100, 255, 0.15);
         }
-
-        /* ================= HEADER ================= */
 
         .header {
             text-align: center;
-
             padding: 35px 20px 28px;
-
             background: rgba(4, 10, 25, 0.75);
-
             border-bottom: 1px solid rgba(0, 150, 255, 0.2);
         }
 
         .logo {
             width: 90px;
             height: 90px;
-
             object-fit: contain;
-
             display: block;
-
             margin: 0 auto 15px;
-
-            filter:
-                drop-shadow(
-                    0 0 15px
-                    rgba(0, 210, 255, 0.45)
-                );
+            filter: drop-shadow(
+                0 0 15px rgba(0, 210, 255, 0.45)
+            );
         }
 
         .title {
             font-size: 26px;
-
             font-weight: 700;
-
             letter-spacing: 3px;
-
             color: #00d2ff;
-
-            text-shadow:
-                0 0 10px
-                rgba(0, 210, 255, 0.45);
-
+            text-shadow: 0 0 10px rgba(0, 210, 255, 0.45);
             margin-bottom: 6px;
         }
 
         .subtitle {
             color: #8fa3bf;
-
             font-size: 14px;
         }
-
-        /* ================= CONTENT ================= */
 
         .content {
             padding: 25px;
@@ -121,13 +86,9 @@
 
         #state {
             font-size: 22px;
-
             font-weight: 700;
-
             text-align: center;
-
             margin-bottom: 15px;
-
             color: #e5c56e;
         }
 
@@ -143,32 +104,22 @@
             color: #e5c56e;
         }
 
-        /* ================= OUTPUT ================= */
-
         #out {
             width: 100%;
-
             min-height: 380px;
-
             max-height: 65vh;
-
             overflow: auto;
-
             white-space: pre-wrap;
-
             word-break: break-word;
 
             direction: ltr;
-
             text-align: left;
 
             padding: 18px;
 
             background: #050a14;
 
-            border:
-                1px solid
-                rgba(0, 210, 255, 0.18);
+            border: 1px solid rgba(0, 210, 255, 0.18);
 
             border-radius: 12px;
 
@@ -181,45 +132,22 @@
                 monospace;
         }
 
-        .ok {
-            color: #70e0a0;
-        }
-
-        .bad {
-            color: #ff817d;
-        }
-
-        .warn {
-            color: #e5c56e;
-        }
-
-        /* ================= BUTTON ================= */
-
         .back {
             display: block;
-
             width: 100%;
-
             margin-top: 16px;
-
             padding: 14px;
 
-            border:
-                1px solid
-                rgba(0, 210, 255, 0.45);
-
+            border: 1px solid rgba(0, 210, 255, 0.45);
             border-radius: 10px;
 
             background: #101c31;
-
             color: #00d2ff;
 
             text-decoration: none;
-
             text-align: center;
 
             font-size: 15px;
-
             font-weight: 700;
 
             transition: 0.25s ease;
@@ -227,32 +155,18 @@
 
         .back:hover {
             background: #142640;
-
-            box-shadow:
-                0 0 15px
-                rgba(0, 210, 255, 0.15);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.15);
         }
-
-        /* ================= FOOTER ================= */
 
         .footer {
             text-align: center;
-
             padding: 15px;
-
             color: #5d6d7e;
-
             font-size: 12px;
-
-            border-top:
-                1px solid
-                rgba(0, 150, 255, 0.15);
+            border-top: 1px solid rgba(0, 150, 255, 0.15);
         }
 
-        /* ================= MOBILE ================= */
-
         @media (max-width: 600px) {
-
             body {
                 padding: 10px;
             }
@@ -285,9 +199,7 @@
 
             #out {
                 min-height: 320px;
-
                 font-size: 12px;
-
                 padding: 13px;
             }
         }
@@ -300,7 +212,6 @@
 
     <main class="container">
 
-        <!-- HEADER -->
         <header class="header">
 
             <img
@@ -319,32 +230,20 @@
 
         </header>
 
-
-        <!-- CONTENT -->
         <section class="content">
 
-            <div
-                id="state"
-                class="warn"
-            >
+            <div id="state" class="warn">
                 جاري تشغيل الصفحة...
             </div>
 
-
             <div id="out"></div>
 
-
-            <a
-                href="./index.html"
-                class="back"
-            >
+            <a href="./index.html" class="back">
                 العودة إلى الصفحة الرئيسية
             </a>
 
         </section>
 
-
-        <!-- FOOTER -->
         <footer class="footer">
             © 2026 Mohamed Ramadan
         </footer>
@@ -353,15 +252,7 @@
 
 </div>
 
-
 <script>
-    /*
-     * واجهة الصفحة فقط.
-     *
-     * chain_lapse.js يتم تحميله مرة واحدة
-     * من أسفل الصفحة.
-     */
-
     const state = document.getElementById("state");
     const out = document.getElementById("out");
 
@@ -375,55 +266,30 @@
         out.scrollTop = out.scrollHeight;
     }
 
-    function clearOutput() {
-        out.textContent = "";
-    }
-
-    /*
-     * التعامل مع الأخطاء الخاصة بالصفحة
-     */
     window.addEventListener("error", function (event) {
-
         log(
             "[PAGE ERROR] " +
             (event.message || "Unknown error")
         );
-
     });
 
-    window.addEventListener(
-        "unhandledrejection",
-        function (event) {
+    window.addEventListener("unhandledrejection", function (event) {
+        log(
+            "[PROMISE ERROR] " +
+            (event.reason || "Unknown rejection")
+        );
+    });
 
-            log(
-                "[PROMISE ERROR] " +
-                (event.reason || "Unknown rejection")
-            );
-
-        }
-    );
-
-
-    /*
-     * معلومات البداية
-     */
     setState("جاري تشغيل الصفحة...", "warn");
 
     log("MOHAMED RAMADAN - PS4 HUB");
     log("--------------------------------");
     log("تم تحميل واجهة الصفحة.");
     log("URL: " + location.href);
-    log("Browser: " + navigator.userAgent);
 </script>
 
-
-<!--
-    تحميل ملف chain_lapse.js مرة واحدة فقط.
--->
-<script
-    type="module"
-    src="./chain_lapse.js">
-</script>
+<!-- يتم تحميله مرة واحدة فقط -->
+<script type="module" src="./chain_lapse.js"></script>
 
 </body>
 </html>
